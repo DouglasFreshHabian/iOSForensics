@@ -2,17 +2,17 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Everything source-built goes here.
-ENV PREFIX=/opt/libimobiledevice
+# ---------------------------------------------------------------------------
+# Build configuration
+# ---------------------------------------------------------------------------
 
-# Make the source-built tools and libraries available automatically
-# in every container created from this image.
-ENV PATH="/opt/libimobiledevice/bin:${PATH}"
+ENV PREFIX=/opt/libimobiledevice
+ENV PATH="/root/.local/bin:/opt/pymobiledevice3Env/bin:/opt/libimobiledevice/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/opt/libimobiledevice/lib"
 ENV PKG_CONFIG_PATH="/opt/libimobiledevice/lib/pkgconfig"
 
 # ---------------------------------------------------------------------------
-# Build dependencies
+# Build dependencies and required tools
 # ---------------------------------------------------------------------------
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -26,10 +26,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libcurl4-openssl-dev \
     libreadline-dev \
     ca-certificates \
+    fish \
+    python3 \
+    python3-venv \
+    python3-pip \
+    pipx \
+    sqlite3 \
+    libusb-1.0-0 \
+    curl \
+    adb \
+    usbutils \
  && rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------------------------------------
-# Build the current upstream stack
+# Build libimobiledevice stack from upstream source
 # ---------------------------------------------------------------------------
 
 WORKDIR /tmp
@@ -40,7 +50,7 @@ RUN set -eux; \
     ./autogen.sh --prefix="$PREFIX"; \
     make -j"$(nproc)"; \
     make install; \
-    cd ..; \
+    cd /tmp; \
     rm -rf libplist
 
 RUN set -eux; \
@@ -49,7 +59,7 @@ RUN set -eux; \
     ./autogen.sh --prefix="$PREFIX"; \
     make -j"$(nproc)"; \
     make install; \
-    cd ..; \
+    cd /tmp; \
     rm -rf libimobiledevice-glue
 
 RUN set -eux; \
@@ -58,7 +68,7 @@ RUN set -eux; \
     ./autogen.sh --prefix="$PREFIX"; \
     make -j"$(nproc)"; \
     make install; \
-    cd ..; \
+    cd /tmp; \
     rm -rf libusbmuxd
 
 RUN set -eux; \
@@ -67,7 +77,7 @@ RUN set -eux; \
     ./autogen.sh --prefix="$PREFIX"; \
     make -j"$(nproc)"; \
     make install; \
-    cd ..; \
+    cd /tmp; \
     rm -rf libtatsu
 
 RUN set -eux; \
@@ -76,11 +86,11 @@ RUN set -eux; \
     ./autogen.sh --prefix="$PREFIX"; \
     make -j"$(nproc)"; \
     make install; \
-    cd ..; \
+    cd /tmp; \
     rm -rf libimobiledevice
 
 # ---------------------------------------------------------------------------
-# Runtime library configuration
+# Configure runtime libraries
 # ---------------------------------------------------------------------------
 
 RUN echo "/opt/libimobiledevice/lib" \
@@ -88,7 +98,34 @@ RUN echo "/opt/libimobiledevice/lib" \
  && ldconfig
 
 # ---------------------------------------------------------------------------
-# Start in a shell
+# Install pymobiledevice3 in a virtual environment
+# ---------------------------------------------------------------------------
+
+RUN set -eux; \
+    python3 -m venv /opt/pymobiledevice3Env; \
+    /opt/pymobiledevice3Env/bin/python3 -m pip install --upgrade pip; \
+    /opt/pymobiledevice3Env/bin/python3 -m pip install --upgrade pymobiledevice3
+
+# ---------------------------------------------------------------------------
+# Install Mobile Verification Toolkit (MVT) with pipx
+# ---------------------------------------------------------------------------
+
+RUN pipx install mvt
+
+# ---------------------------------------------------------------------------
+# Install Android Quick Forensics (androidqf)
+# ---------------------------------------------------------------------------
+
+ARG ANDROIDQF_VERSION=1.8.3
+
+RUN set -eux; \
+    curl -fL --retry 3 \
+      "https://github.com/mvt-project/androidqf/releases/download/v${ANDROIDQF_VERSION}/androidqf_linux_amd64_${ANDROIDQF_VERSION}" \
+      -o /usr/local/bin/androidqf; \
+    chmod 755 /usr/local/bin/androidqf
+
+# ---------------------------------------------------------------------------
+# Shell configuration
 # ---------------------------------------------------------------------------
 
 WORKDIR /root
