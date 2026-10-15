@@ -1,0 +1,166 @@
+# 📱 UxPlay — Mirror an iPhone to Linux
+
+UxPlay is an AirPlay mirroring server for Linux that lets you mirror an iPhone or iPad screen to your Linux desktop over Wi-Fi. This guide covers installation, starting UxPlay, enlarging the mirrored display, and checking Avahi service discovery.
+
+## 📦 Installation
+
+On Ubuntu or Debian-based Linux distributions, install UxPlay and the Avahi utilities:
+
+```
+sudo apt update
+sudo apt install -y uxplay avahi-daemon avahi-utils
+```
+
+- 📺 `uxplay` — receives and displays the AirPlay stream.
+- 📡 `avahi-daemon` — advertises and discovers services on the local network using mDNS/DNS-SD.
+- 🔎 `avahi-utils` — provides tools such as `avahi-browse` for troubleshooting service discovery.
+
+> 💡 If your distribution's UxPlay package is unavailable or outdated, see the [official UxPlay GitHub repository](<https://github.com/FDH2/UxPlay>) for source-build instructions.
+
+## 📡 Check and Start Avahi
+
+Avahi allows the iPhone to discover the Linux machine as an AirPlay receiver.
+
+### Check the service status
+
+```
+systemctl status avahi-daemon
+```
+
+### Start Avahi
+
+```
+sudo systemctl start avahi-daemon
+```
+
+### Enable Avahi at boot
+
+```
+sudo systemctl enable avahi-daemon
+```
+
+### Restart Avahi if necessary
+
+```
+sudo systemctl restart avahi-daemon
+```
+
+### Verify AirPlay service discovery
+
+```
+avahi-browse -art
+```
+
+Look for AirPlay-related services in the output.
+
+If the iPhone cannot discover UxPlay, verify that both devices are on the same local network and that the firewall permits mDNS traffic on UDP port `5353`.
+
+## 🚀 Start UxPlay
+
+Start UxPlay with the following command:
+
+```
+uxplay -d -n Linux -p 35000
+```
+
+**Command options:**
+
+- `-d` — enables debug output.
+- `-n Linux` — advertises the receiver name as `Linux`.
+- `-p 35000` — configures UxPlay to use its specified port range beginning at port `35000`.
+
+Keep the terminal open while mirroring. Use `Ctrl+C` to stop UxPlay.
+
+## 🖥️ Make the Mirrored iPhone Display Larger
+
+### Option 1: Fullscreen mode
+
+```
+uxplay -d -n Linux -p 35000 -fs
+```
+
+The `-fs` option requests fullscreen mode on supported display backends. Depending on your setup, you can also toggle fullscreen using **F11** or **Alt+Enter**.
+
+### Option 2: Specify the display resolution
+
+```
+uxplay -d -n Linux -p 35000 -s 1920x1080
+```
+
+The `-s` option specifies the display resolution requested for the AirPlay stream. The actual stream dimensions depend on negotiation with the iPhone and the UxPlay build.
+
+### Option 3: Maximize the window
+
+Start UxPlay normally and maximize its video window using your desktop environment's window controls.
+
+> 💡 **Recommendation:** Start with fullscreen mode using `-fs`. If you prefer to keep other desktop windows visible, maximize the UxPlay window instead.
+
+## 📲 Connect the iPhone
+
+1. Connect your iPhone and Linux machine to the same Wi-Fi network.
+2. Start Avahi and UxPlay on Linux.
+3. Unlock your iPhone.
+4. Open **Control Center** on the iPhone.
+5. Tap **Screen Mirroring**.
+6. Select **Linux** (or the receiver name you configured).
+7. Follow any prompts displayed on the phone or receiver.
+
+Your iPhone screen should now appear on the Linux desktop.
+
+## 🧰 Troubleshooting
+
+### UxPlay doesn't appear in Screen Mirroring
+
+Check Avahi:
+
+```
+systemctl is-active avahi-daemon
+```
+
+Check service discovery:
+
+```
+avahi-browse -art
+```
+
+Restart Avahi if needed:
+
+```
+sudo systemctl restart avahi-daemon
+```
+
+### UxPlay appears, but the connection fails
+
+- Confirm both devices are on the same network.
+- Check whether your firewall is blocking mDNS or UxPlay's configured streaming ports.
+- Check the terminal output for errors.
+
+If UFW is enabled, mDNS discovery generally requires UDP port `5353`:
+
+```
+sudo ufw status
+```
+
+Only open the additional UxPlay ports required by your chosen configuration and network environment.
+
+### The mirrored display is too small
+
+Try:
+
+```
+uxplay -d -n Linux -p 35000 -fs
+```
+
+If fullscreen is unavailable, check whether your UxPlay build supports it. Fullscreen support depends on the display backend and build configuration.
+
+## ⏹️ Stop UxPlay
+
+Press:
+
+```
+Ctrl+C
+```
+
+in the terminal running UxPlay.
+
+Avahi can remain enabled in the background for future AirPlay sessions.
