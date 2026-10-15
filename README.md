@@ -55,19 +55,38 @@ sudo apt install docker.io docker-clean docker-compose-v2
 
 ```
 
-Additional Docker packages used in some setups:
-
-```
-sudo apt install docker.io docker-buildx docker-clean
-
-```
-
+---
 Verify the installation:
 
 ```
 docker --version
 docker compose version
 
+```
+## ⚙️ Configure Docker
+
+Create the docker group (if it doesn't already exist)
+
+```bash
+sudo groupadd docker
+```
+
+Add your user to the docker group
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+Apply the new group membership
+
+```bash
+newgrp docker
+```
+
+Test that Docker works without sudo
+
+```bash
+docker run hello-world
 ```
 
 ---
