@@ -33,14 +33,12 @@ Monitor kernel messages and connected USB devices.
 
 ```
 sudo dmesg -w
-
 ```
 
 ### List connected USB devices
 
 ```
 lsusb
-
 ```
 
 ---
@@ -52,7 +50,6 @@ Install Docker and the Compose plugin on Debian/Ubuntu-based systems.
 ```
 sudo apt update
 sudo apt install docker.io docker-clean docker-compose-v2
-
 ```
 
 ---
@@ -61,7 +58,6 @@ Verify the installation:
 ```
 docker --version
 docker compose version
-
 ```
 ## ⚙️ Configure Docker
 
@@ -102,7 +98,6 @@ MVT is an open-source toolkit for examining mobile device backups and identifyin
 ```
 sudo apt update
 sudo apt install python3 python3-venv python3-pip sqlite3 libusb-1.0-0
-
 ```
 
 ### 2. Install using pipx (recommended)
@@ -112,7 +107,6 @@ Install pipx:
 ```
 sudo apt install pipx
 pipx ensurepath
-
 ```
 
 Install or upgrade MVT:
@@ -120,7 +114,6 @@ Install or upgrade MVT:
 ```
 pipx install mvt
 pipx upgrade mvt
-
 ```
 
 > 💡 If you have not installed MVT yet, use `pipx install mvt`. Use `pipx upgrade mvt` for subsequent upgrades.
@@ -131,31 +124,26 @@ Create and activate a virtual environment:
 
 ```
 sudo apt install python3 python3-venv
-
 python3 -m venv mvtEnvironment
 source mvtEnvironment/bin/activate
-
 ```
 
 Install MVT:
 
 ```
 pip install mvt
-
 ```
 
 When finished, deactivate the environment:
 
 ```
 deactivate
-
 ```
 
 ### 4. Enable Bash autocompletion
 
 ```
 mvt completion bash --install
-
 ```
 
 ---
@@ -168,7 +156,6 @@ Use `idevicebackup2` to manage iOS backups on a paired device.
 
 ```
 idevicebackup2 -i encryption on
-
 ```
 
 Follow the interactive prompts to configure encryption.
@@ -177,14 +164,12 @@ Follow the interactive prompts to configure encryption.
 
 ```
 idevicebackup2 backup --full .
-
 ```
 
 ### Create a full backup in a specified directory
 
 ```
 idevicebackup2 backup --full /PATH/TO/BACKUP
-
 ```
 
 > ⚠️ Replace `/PATH/TO/BACKUP` with your intended backup directory. Keep the backup password secure; losing it may prevent access to encrypted backup contents.
@@ -199,14 +184,12 @@ Use `afcclient` to interact with the device's Apple File Conduit (AFC) service w
 
 ```
 afcclient
-
 ```
 
 ### Display device information
 
 ```
 afcclient devinfo
-
 ```
 
 ### List files and directories
@@ -214,28 +197,24 @@ afcclient devinfo
 ```
 afcclient ls
 afcclient ls DCIM/100APPLE/
-
 ```
 
 ### Inspect file information
 
 ```
 afcclient info DCIM/100APPLE/IMG_0001.HEIC
-
 ```
 
 ### Download a file from the device
 
 ```
 afcclient get DCIM/100APPLE/IMG_0001.HEIC
-
 ```
 
 ### Upload a file to the device
 
 ```
 afcclient put pic.png DCIM/100APPLE/
-
 ```
 
 > 📌 File access depends on the device, its iOS version, pairing state, and available AFC service permissions.
@@ -250,35 +229,30 @@ Use `libimobiledevice` utilities to inspect device details and check pairing sta
 
 ```
 ideviceinfo -s
-
 ```
 
 ### List paired devices
 
 ```
 idevicepair list
-
 ```
 
 ### Validate pairing
 
 ```
 idevicepair validate
-
 ```
 
 ### Query a specific device property
 
 ```
 ideviceinfo -k ProductVersion
-
 ```
 
 Example output:
 
 ```
 16.3.1
-
 ```
 
 The output depends on the connected device's iOS version.
@@ -287,7 +261,6 @@ The output depends on the connected device's iOS version.
 
 ```
 ideviceinfo -q com.apple.mobile.battery
-
 ```
 
 This queries the specified domain when supported by the installed tool version and device.
@@ -300,7 +273,6 @@ Check the status of the USB multiplexing service (`usbmuxd`):
 
 ```
 sudo systemctl status usbmuxd
-
 ```
 
 Restart the service if necessary:
@@ -308,14 +280,12 @@ Restart the service if necessary:
 ```
 sudo systemctl stop usbmuxd
 sudo systemctl start usbmuxd
-
 ```
 
 Then reconnect the device and validate pairing again:
 
 ```
 idevicepair validate
-
 ```
 
 > 💡 Make sure the iPhone is unlocked when required, trust prompts have been accepted, and the USB connection is working.
@@ -330,21 +300,18 @@ Use `idevicesyslog` to stream device logs and filter output.
 
 ```
 idevicesyslog
-
 ```
 
 ### List available process IDs
 
 ```
 idevicesyslog pidlist
-
 ```
 
 ### Filter logs by process name
 
 ```
 idevicesyslog -p wifid
-
 ```
 
 The `wifid` filter can help inspect log messages associated with the Wi-Fi daemon.
@@ -357,7 +324,6 @@ The `wifid` filter can help inspect log messages associated with the Wi-Fi daemo
 
 ```
 idevicename Fresh
-
 ```
 
 This attempts to change the device name to `Fresh`.
@@ -366,14 +332,12 @@ This attempts to change the device name to `Fresh`.
 
 ```
 idevicediagnostics shutdown
-
 ```
 
 ### Restart the device
 
 ```
 idevicediagnostics restart
-
 ```
 
 > ⚠️ Shutdown and restart commands interrupt device activity. Use them only when appropriate for your investigation.
@@ -388,14 +352,12 @@ Search for the package:
 
 ```
 apt search ideviceinstaller
-
 ```
 
 Install it:
 
 ```
 sudo apt install ideviceinstaller
-
 ```
 
 ### List all installed applications
@@ -409,7 +371,6 @@ ideviceinstaller list --all
 
 ```
 pymobiledevice3 apps list
-
 ```
 
 ---
@@ -422,14 +383,12 @@ For Bluetooth troubleshooting or extended logging, begin by checking available d
 
 ```
 pymobiledevice3 usbmux list
-
 ```
 
 ### Stream live logs
 
 ```
 pymobiledevice3 syslog live
-
 ```
 
 > 📌 These commands provide device connectivity and log access. Enabling Bluetooth-specific extended logging may require additional configuration depending on the iOS version, device capabilities, and available developer or diagnostic services.
@@ -442,35 +401,30 @@ pymobiledevice3 syslog live
 
 ```
 pymobiledevice3 usbmux list
-
 ```
 
 ### Stream live system logs
 
 ```
 pymobiledevice3 syslog live
-
 ```
 
 ### List installed applications
 
 ```
 pymobiledevice3 apps list
-
 ```
 
 ### Display Lockdown information
 
 ```
 pymobiledevice3 lockdown info
-
 ```
 
 ### Pair with a device
 
 ```
 pymobiledevice3 lockdown pair
-
 ```
 
 Follow any prompts displayed by the tool.
@@ -483,7 +437,6 @@ Extract crash reports using `idevicecrashreport`:
 
 ```
 idevicecrashreport -e -k .
-
 ```
 
 This uses the current directory as the destination for extracted reports.
@@ -500,7 +453,6 @@ The following commands illustrate the preparation of backup password hashes for 
 
 ```
 ./itunes_backup2hashcat ../../manifest.plist
-
 ```
 
 The exact input file and utility version may affect whether hash extraction succeeds.
@@ -509,7 +461,6 @@ The exact input file and utility version may affect whether hash extraction succ
 
 ```
 hashid
-
 ```
 
 Use the resulting hash format information to select an appropriate auditing tool and mode.
@@ -524,7 +475,6 @@ Use Hashcat only on password hashes you own or are explicitly authorized to audi
 
 ```
 hashcat -m 14800 -a 0 --force hash.txt passwords.txt
-
 ```
 
 - `-m 14800` — selects the Hashcat mode commonly associated with legacy iTunes backup password hashes.
@@ -539,14 +489,12 @@ hashcat -m 14800 -a 0 --force hash.txt passwords.txt
 
 ```
 hashcat -m 14800 hash.txt --show
-
 ```
 
 ### Inspect the Hashcat potfile
 
 ```
 cat /home/fresh/.local/share/hashcat/hashcat.potfile
-
 ```
 
 The potfile stores previously recovered hashes and their corresponding plaintexts. Protect it as sensitive data.
@@ -555,14 +503,12 @@ The potfile stores previously recovered hashes and their corresponding plaintext
 
 ```
 hashcat -a 0 -m 0 hash.txt rockyou.txt
-
 ```
 
 ### Dictionary attack with rules
 
 ```
 hashcat -a 0 -m 0 hash.txt rockyou.txt -r rules/best64.rule
-
 ```
 
 - `-m 0` — selects raw MD5.
@@ -582,7 +528,6 @@ Docker can be used to run MVT in an isolated container while exposing a host dir
 ```
 sudo apt update
 sudo apt install docker.io docker-buildx docker-clean
-
 ```
 
 ### 2. Start an interactive MVT container
@@ -592,7 +537,6 @@ docker run -it --rm \
   -v /home/fresh/iOS/Backup/:/mnt \
   ghcr.io/mvt-project/mvt \
   /bin/bash
-
 ```
 
 Command breakdown:
@@ -608,7 +552,6 @@ Inside the container:
 
 ```
 ls /mnt
-
 ```
 
 Identify the correct backup directory before proceeding.
@@ -620,7 +563,6 @@ mvt-ios decrypt-backup \
   -p "Password" \
   -d /home/cases/ \
   /mnt/00000-0000000/
-
 ```
 
 Replace the example password, destination, and backup directory with the appropriate values for your case.
