@@ -36,6 +36,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     adb \
     usbutils \
+    jq \
+    strace \
  && rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------------------------------------
@@ -123,6 +125,18 @@ RUN set -eux; \
       "https://github.com/mvt-project/androidqf/releases/download/v${ANDROIDQF_VERSION}/androidqf_linux_amd64_${ANDROIDQF_VERSION}" \
       -o /usr/local/bin/androidqf; \
     chmod 755 /usr/local/bin/androidqf
+
+# ---------------------------------------------------------------------------
+# Testing
+# ---------------------------------------------------------------------------
+
+RUN mkdir -p /opt/adb-wrapper \
+ && printf '%s\n' \
+    '#!/bin/sh' \
+    'if [ "$1" = "kill-server" ]; then exit 0; fi' \
+    'exec /usr/bin/adb "$@"' \
+    > /opt/adb-wrapper/adb \
+ && chmod +x /opt/adb-wrapper/adb
 
 # ---------------------------------------------------------------------------
 # Shell configuration
